@@ -3,7 +3,7 @@
 import { useTheme } from "@/components/refine-ui/theme/theme-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 type ThemeToggleProps = {
   className?: string;
@@ -18,11 +18,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         setTheme("dark");
         break;
       case "dark":
-        setTheme("system");
-        break;
-      case "system":
         setTheme("light");
         break;
+      // case "dark":
+      //   setTheme("system");
+      //   break;
+      // case "system":
+      //   setTheme("light");
+      //   break;
       default:
         setTheme("light");
     }
@@ -70,7 +73,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           }
         )}
       />
-      <Monitor
+      {/* <Monitor
         className={cn(
           "absolute",
           "h-[1.2rem]",
@@ -84,7 +87,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
             "scale-0": theme === "light" || theme === "dark",
           }
         )}
-      />
+      /> */}
       <span className="sr-only">Toggle theme (Light → Dark → System)</span>
     </Button>
   );
