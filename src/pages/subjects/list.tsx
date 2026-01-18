@@ -18,6 +18,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
+/**
+ * Renders the Subjects list view with search, department filtering, and a create action.
+ *
+ * The view includes a search input for filtering by name, a department dropdown to restrict
+ * results, and a Create button. It displays subjects in a server-paginated, sortable table
+ * with columns for code, name, department, and description.
+ *
+ * @returns A React element containing the Subjects management UI (search, filters, actions, and data table).
+ */
 export default function SubjectsList() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
