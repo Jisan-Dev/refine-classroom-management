@@ -22,6 +22,6 @@ export const DEPARTMENTS = [
 ] as const;
 
 export const DEPARTMENT_OPTIONS = DEPARTMENTS.map((dept) => ({
-  value: dept.toLowerCase().replace(/\s+/g, "-"),
+  value: dept,
   label: dept,
 }));
