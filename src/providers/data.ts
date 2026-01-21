@@ -1,60 +1,104 @@
-// import { createSimpleRestDataProvider } from "@refinedev/rest/simple-rest";
-// import { API_URL } from "./constants";
-// export const { dataProvider, kyInstance } = createSimpleRestDataProvider({
-//   apiURL: API_URL,
-// });
+import { BACKEND_BASE_URL } from "@/constants";
+import { ListResponse } from "@/types";
+import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
 
-import { BaseRecord, DataProvider, GetListParams, GetListResponse } from "@refinedev/core";
-import { Subject } from "../types";
+if (!BACKEND_BASE_URL) {
+  throw new Error("BACKEND_BASE_URL is not defined in environment variables.");
+}
 
-const subjects: Subject[] = [
-  {
-    id: 1,
-    name: "Introduction to Computer Science",
-    code: "CS101",
-    description:
-      "A foundational course on the principles of computer science, covering topics like algorithms, data structures, and programming concepts.",
-    department: "Computer Science",
-  },
-  {
-    id: 2,
-    name: "Principles of Microeconomics",
-    code: "ECON201",
-    description:
-      "An introductory course on microeconomic theory, including supply and demand, market structures, and consumer behavior.",
-    department: "Economics",
-  },
-  {
-    id: 3,
-    name: "Introduction to Psychology",
-    code: "PSY101",
-    description:
-      "A survey of the major topics in psychology, including cognitive processes, social behavior, and human development.",
-    department: "Psychology",
-  },
-];
+const options: CreateDataProviderOptions = {
+  getList: {
+    getEndpoint: ({ resource }) => resource,
 
-export const dataProvider: DataProvider = {
-  getList: async <TData extends BaseRecord = BaseRecord>({
-    resource,
-  }: GetListParams): Promise<GetListResponse<TData>> => {
-    if (resource !== "subjects") return { data: [] as TData[], total: 0 };
+    buildQueryParams: async ({ resource, pagination, filters }) => {
+      const page = pagination?.currentPage ?? 1;
+      const pageSize = pagination?.pageSize ?? 10;
 
-    return { data: subjects as unknown as TData[], total: subjects.length };
-  },
+      const params: Record<string, string | number> = { page, limit: pageSize };
 
-  getOne: async () => {
-    throw new Error("This method is not implemented.");
-  },
-  create: async () => {
-    throw new Error("This method is not implemented.");
-  },
-  update: async () => {
-    throw new Error("This method is not implemented.");
-  },
-  deleteOne: async () => {
-    throw new Error("This method is not implemented.");
-  },
+      filters?.forEach((filter) => {
+        const field = "field" in filter ? filter.field : "";
+        const value = String(filter?.value);
 
-  getApiUrl: () => "",
+        if (resource === "subjects") {
+          if (field === "department") params.department = value;
+          if (field === "name" || field === "code") params.search = value;
+        }
+      });
+
+      return params;
+    },
+
+    mapResponse: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+
+      return payload?.data ?? [];
+    },
+
+    getTotalCount: async (response) => {
+      const payload: ListResponse = await response.clone().json();
+
+      return payload?.pagination?.total ?? payload?.data?.length ?? 0;
+    },
+  },
 };
+
+const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
+
+export { dataProvider };
+
+// MOCK DATA PROVIDER - IGNORE (FOR REFERENCE ONLY)
+// import { BaseRecord, DataProvider, GetListParams, GetListResponse } from "@refinedev/core";
+// import { Subject } from "../types";
+
+// const subjects: Subject[] = [
+//   {
+//     id: 1,
+//     name: "Introduction to Computer Science",
+//     code: "CS101",
+//     description:
+//       "A foundational course on the principles of computer science, covering topics like algorithms, data structures, and programming concepts.",
+//     department: "Computer Science",
+//   },
+//   {
+//     id: 2,
+//     name: "Principles of Microeconomics",
+//     code: "ECON201",
+//     description:
+//       "An introductory course on microeconomic theory, including supply and demand, market structures, and consumer behavior.",
+//     department: "Economics",
+//   },
+//   {
+//     id: 3,
+//     name: "Introduction to Psychology",
+//     code: "PSY101",
+//     description:
+//       "A survey of the major topics in psychology, including cognitive processes, social behavior, and human development.",
+//     department: "Psychology",
+//   },
+// ];
+
+// export const dataProvider: DataProvider = {
+//   getList: async <TData extends BaseRecord = BaseRecord>({
+//     resource,
+//   }: GetListParams): Promise<GetListResponse<TData>> => {
+//     if (resource !== "subjects") return { data: [] as TData[], total: 0 };
+
+//     return { data: subjects as unknown as TData[], total: subjects.length };
+//   },
+
+//   getOne: async () => {
+//     throw new Error("This method is not implemented.");
+//   },
+//   create: async () => {
+//     throw new Error("This method is not implemented.");
+//   },
+//   update: async () => {
+//     throw new Error("This method is not implemented.");
+//   },
+//   deleteOne: async () => {
+//     throw new Error("This method is not implemented.");
+//   },
+
+//   getApiUrl: () => "",
+// };
