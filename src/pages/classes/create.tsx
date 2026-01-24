@@ -309,7 +309,7 @@ export default function Create() {
                           />
                           <InputGroupAddon align="block-end">
                             <InputGroupText className="tabular-nums">
-                              {field?.value?.length}/1000 characters
+                              {field?.value?.length ?? 0}/1000 characters
                             </InputGroupText>
                           </InputGroupAddon>
                         </InputGroup>
