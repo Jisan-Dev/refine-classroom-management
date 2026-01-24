@@ -1,6 +1,6 @@
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from "@/constants";
 import { UploadWidgetValue } from "@/types";
-import { UploadCloud } from "lucide-react";
+import { Loader2, UploadCloud, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function UploadWidget({
@@ -41,6 +41,8 @@ export default function UploadWidget({
           }),
         },
       );
+
+      if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
 
       const data = await res.json();
 
@@ -126,7 +128,17 @@ export default function UploadWidget({
             disabled={isRemoving}
             className="text-sm text-red-500 cursor-pointer"
           >
-            {isRemoving ? "Removing..." : "Remove image"}
+            {isRemoving ? (
+              <span className="flex items-center gap-1">
+                <Loader2 className="animate-spin size-5 -mt-1" />
+                Removing...
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <X className="size-5 -mt-1" />
+                Remove image
+              </span>
+            )}
           </button>
         </>
       ) : (

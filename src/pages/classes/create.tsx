@@ -178,7 +178,7 @@ export default function Create() {
                             onValueChange={(value) => field.onChange(Number(value))}
                             value={field.value?.toString() || ""}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger id="subject" className="w-full">
                               <SelectValue placeholder="Select a subject" />
                             </SelectTrigger>
 
@@ -200,17 +200,16 @@ export default function Create() {
                       control={control}
                       render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="subject">
+                          <FieldLabel htmlFor="teacherId">
                             Teacher <span className="text-orange-600">*</span>
                           </FieldLabel>
-
                           <Select
                             {...field}
                             aria-invalid={fieldState.invalid}
                             onValueChange={field.onChange}
                             value={field.value?.toString() || ""}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger id="teacherId" className="w-full">
                               <SelectValue placeholder="Select a teacher" />
                             </SelectTrigger>
 
@@ -264,7 +263,7 @@ export default function Create() {
                       control={control}
                       render={({ field, fieldState }) => (
                         <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="subject">
+                          <FieldLabel htmlFor="status">
                             Status <span className="text-orange-600">*</span>
                           </FieldLabel>
 
@@ -274,7 +273,7 @@ export default function Create() {
                             onValueChange={field.onChange}
                             value={field.value}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger id="status" className="w-full">
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
 

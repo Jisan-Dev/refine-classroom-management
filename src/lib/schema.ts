@@ -41,7 +41,7 @@ export const classSchema = z.object({
       invalid_type_error: "Subject is required",
     })
     .min(1, "Subject is required"),
-  teacherId: z.string({ required_error: "Teacher is required" }).min(2),
+  teacherId: z.string({ required_error: "Teacher is required" }).min(1, "Teacher is required"),
   capacity: z.coerce
     .number({
       required_error: "Capacity is required",
