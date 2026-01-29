@@ -128,17 +128,21 @@ export default function UploadWidget({
             disabled={isRemoving}
             className="text-sm text-red-500 cursor-pointer"
           >
-            {isRemoving ? (
+            <div className="flex items-center gap-1">
+              {isRemoving ? <Loader2 className="animate-spin size-5 " /> : <X className="size-5" />}
+              <span className="leading-none">{isRemoving ? "Removing..." : "Remove image"}</span>
+            </div>
+            {/* {isRemoving ? (
               <span className="flex items-center gap-1">
-                <Loader2 className="animate-spin size-5 -mt-1" />
+                <Loader2 className="animate-spin size-5 " />
                 Removing...
               </span>
             ) : (
               <span className="flex items-center gap-1">
-                <X className="size-5 -mt-1" />
+                <X className="size-5" />
                 Remove image
               </span>
-            )}
+            )} */}
           </button>
         </>
       ) : (

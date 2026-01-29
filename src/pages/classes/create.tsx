@@ -22,29 +22,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import UploadWidget from "@/components/upload-widget";
 import { classSchema } from "@/lib/schema";
-import { UploadWidgetValue } from "@/types";
+import { Subject, UploadWidgetValue, User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useBack } from "@refinedev/core";
+import { useBack, useList } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { Loader2 } from "lucide-react";
 import { Controller } from "react-hook-form";
 import * as z from "zod";
-
-const teachers = [
-  { id: 1, name: "John Smith" },
-  { id: 2, name: "Sarah Johnson" },
-  { id: 3, name: "Michael Brown" },
-  { id: 4, name: "Emily Davis" },
-  { id: 5, name: "David Wilson" },
-];
-
-const subjects = [
-  { id: 1, name: "Biology", code: "BIO" },
-  { id: 2, name: "Chemistry", code: "CHM" },
-  { id: 3, name: "Physics", code: "PHY" },
-  { id: 4, name: "Mathematics", code: "MTH" },
-  { id: 5, name: "English Literature", code: "ENG" },
-];
 
 export default function Create() {
   const back = useBack();
@@ -58,6 +42,7 @@ export default function Create() {
   });
 
   const {
+    refineCore: { onFinish },
     control,
     formState: { isSubmitting, errors },
     handleSubmit,
@@ -66,11 +51,29 @@ export default function Create() {
 
   const onSubmit = async (data: z.infer<typeof classSchema>) => {
     try {
-      console.log(data);
+      const res = await onFinish(data);
+      console.log("Created class:", res);
     } catch (error) {
       console.log("Error creating new classes", error);
     }
   };
+
+  const { query: subjectsQuery } = useList<Subject>({
+    resource: "subjects",
+    pagination: { pageSize: 100 },
+  });
+
+  const { query: teachersQuery } = useList<User>({
+    resource: "users",
+    filters: [{ field: "role", operator: "eq", value: "teacher" }],
+    pagination: { pageSize: 100 },
+  });
+
+  const subjects = subjectsQuery.data?.data || [];
+  const subjectsLoading = subjectsQuery.isLoading;
+
+  const teachers = teachersQuery.data?.data || [];
+  const teachersLoading = teachersQuery.isLoading;
 
   const bannerPublicId = watch("bannerCldPubId");
 
@@ -177,6 +180,7 @@ export default function Create() {
                             aria-invalid={fieldState.invalid}
                             onValueChange={(value) => field.onChange(Number(value))}
                             value={field.value?.toString() || ""}
+                            disabled={subjectsLoading}
                           >
                             <SelectTrigger id="subject" className="w-full">
                               <SelectValue placeholder="Select a subject" />
@@ -208,6 +212,7 @@ export default function Create() {
                             aria-invalid={fieldState.invalid}
                             onValueChange={field.onChange}
                             value={field.value?.toString() || ""}
+                            disabled={teachersLoading}
                           >
                             <SelectTrigger id="teacherId" className="w-full">
                               <SelectValue placeholder="Select a teacher" />
